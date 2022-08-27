@@ -1,4 +1,5 @@
 #include "PathFindingWindows.h"
+#include <Windows.h>
 
 void PathFindingWindows::init(void)
 {
@@ -7,8 +8,8 @@ void PathFindingWindows::init(void)
 
 void PathFindingWindows::draw(void)
 {
-	cleardevice();
 	BeginBatchDraw();
+	cleardevice();
 
 	for (int i = 0; i < ROW + 2; i++) {
 		for (int j = 0; j < COL + 2; j++) {
@@ -47,10 +48,12 @@ void PathFindingWindows::solifyBlock_and_Start(void)
 			}
 			else {
 				if (bfs_button.isClick(&msg)) {
+					constructGraph();
 					BFS();
 					break;
 				}
 				else if (dfs_button.isClick(&msg)) {
+					constructGraph();
 					DFS();
 					break;
 				}
@@ -60,6 +63,11 @@ void PathFindingWindows::solifyBlock_and_Start(void)
 		}
 	}
 
+	
+}
+
+void PathFindingWindows::constructGraph(void)
+{
 	// Construct a graph
 	for (int i = 1; i < ROW + 1; i++) {
 		for (int j = 1; j < COL + 1; j++) {
@@ -84,8 +92,45 @@ void PathFindingWindows::BFS(void)
 {
 }
 
+bool PathFindingWindows::DFS(Block& _block)
+{
+	if (_block.solid) {
+		return false;
+	}
+	_block.visit = true;
+	draw();
+
+	BeginBatchDraw();
+	setfillcolor(RED);
+	fillrectangle(BLOCK_LEN * _block.y, BLOCK_LEN * _block.x, BLOCK_LEN * (_block.y + 1), BLOCK_LEN * (_block.x + 1));
+	EndBatchDraw();
+
+	Sleep(10);
+	if (_block.x == COL && _block.y == ROW) {
+		return true; // ур╣╫жу╣Ц
+	}
+
+	if (_block.nearBlock.size() == 0) {
+		return false;
+	}
+	for (auto& near_iter : _block.nearBlock) {
+		if (!map[near_iter.first][near_iter.second].visit) {
+			if (DFS(map[near_iter.first][near_iter.second])) {
+				BeginBatchDraw();
+				setfillcolor(RED);
+				fillrectangle(BLOCK_LEN * _block.y, BLOCK_LEN * _block.x, BLOCK_LEN * (_block.y + 1), BLOCK_LEN * (_block.x + 1));
+				EndBatchDraw();
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void PathFindingWindows::DFS(void)
 {
+	DFS(map[1][1]);
 }
 
 PathFindingWindows::PathFindingWindows(void)
@@ -117,4 +162,6 @@ void PathFindingWindows::start(void)
 	draw();
 
 	solifyBlock_and_Start();
+
+	Sleep(100000);
 }

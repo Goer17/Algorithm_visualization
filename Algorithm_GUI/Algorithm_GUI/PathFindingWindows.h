@@ -47,7 +47,11 @@ private:
 
 	void solifyBlock_and_Start(void); // Solify the blocks where users click
 
+	void constructGraph(void); // Construct a graph
+
 	void BFS(void); // Breadth First Search 
+
+	bool DFS(Block& _block);
 
 	void DFS(void); // Deep First Search
 
