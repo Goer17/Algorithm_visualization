@@ -1,6 +1,7 @@
 #pragma once
 #include <easyx.h>
 #include <vector>
+#include <queue>
 #include "Button.h"
 
 using namespace std;
@@ -51,7 +52,7 @@ private:
 
 	void BFS(void); // Breadth First Search 
 
-	bool DFS(Block& _block);
+	bool DFS(Block& _block); // Depth Firse Search
 
 	void DFS(void); // Deep First Search
 

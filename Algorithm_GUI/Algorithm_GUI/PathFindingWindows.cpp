@@ -90,6 +90,59 @@ void PathFindingWindows::constructGraph(void)
 
 void PathFindingWindows::BFS(void)
 {
+	if (map[1][1].solid) {
+		return;
+	}
+
+	vector<vector<Block>> preBlock;
+	for (int i = 0; i < ROW + 2; i++) {
+		preBlock.push_back(vector<Block>());
+		for (int j = 0; j < COL + 2; j++) {
+			preBlock.back().push_back(Block(-1, -1));
+		}
+	}
+
+	queue<Block> blockQueue;
+	blockQueue.push(map[1][1]);
+	map[1][1].visit = true;
+	while (blockQueue.size() != 0 && !map[ROW][COL].visit) {
+
+		Block _block = blockQueue.front();
+		blockQueue.pop();
+
+		for (auto near_iter : _block.nearBlock) {
+			if (!map[near_iter.first][near_iter.second].visit) {
+				map[near_iter.first][near_iter.second].visit = true;
+				blockQueue.push(map[near_iter.first][near_iter.second]);
+				preBlock[near_iter.first][near_iter.second] = _block; // record the forerunner
+			}
+		}
+
+		draw();
+
+		BeginBatchDraw();
+		queue<Block> copyArr = blockQueue;
+		while (copyArr.size() != 0) {
+			setfillcolor(GREEN);
+			Block boundary_block = copyArr.front();
+			copyArr.pop();
+			fillrectangle(BLOCK_LEN * boundary_block.y, BLOCK_LEN * boundary_block.x, BLOCK_LEN * (boundary_block.y + 1), BLOCK_LEN * (boundary_block.x + 1));
+		}
+		EndBatchDraw();
+	}
+
+	draw();
+
+	if (map[ROW][COL].visit) {
+		for (auto near_iter = map[ROW][COL]; preBlock[near_iter.x][near_iter.y].x != -1 && preBlock[near_iter.x][near_iter.y].y != -1; near_iter = map[preBlock[near_iter.x][near_iter.y].x][preBlock[near_iter.x][near_iter.y].y]) {
+			setfillcolor(RED);
+			fillrectangle(BLOCK_LEN * near_iter.y, BLOCK_LEN * near_iter.x, BLOCK_LEN * (near_iter.y + 1), BLOCK_LEN * (near_iter.x + 1));
+		}
+
+		setfillcolor(RED);
+		fillrectangle(BLOCK_LEN, BLOCK_LEN, 2 * BLOCK_LEN, 2 * BLOCK_LEN);
+	}
+	
 }
 
 bool PathFindingWindows::DFS(Block& _block)
@@ -105,7 +158,7 @@ bool PathFindingWindows::DFS(Block& _block)
 	fillrectangle(BLOCK_LEN * _block.y, BLOCK_LEN * _block.x, BLOCK_LEN * (_block.y + 1), BLOCK_LEN * (_block.x + 1));
 	EndBatchDraw();
 
-	Sleep(10);
+	Sleep(5);
 	if (_block.x == COL && _block.y == ROW) {
 		return true; // ур╣╫жу╣Ц
 	}
