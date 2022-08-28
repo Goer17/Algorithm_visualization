@@ -71,17 +71,17 @@ void PathFindingWindows::constructGraph(void)
 	// Construct a graph
 	for (int i = 1; i < ROW + 1; i++) {
 		for (int j = 1; j < COL + 1; j++) {
-			if (!map[i - 1][j].solid) {
-				map[i][j].nearBlock.push_back({ i - 1, j });
-			}
 			if (!map[i + 1][j].solid) {
 				map[i][j].nearBlock.push_back({ i + 1, j });
 			}
-			if (!map[i][j - 1].solid) {
-				map[i][j].nearBlock.push_back({ i, j - 1 });
-			}
 			if (!map[i][j + 1].solid) {
 				map[i][j].nearBlock.push_back({ i, j + 1 });
+			}
+			if (!map[i - 1][j].solid) {
+				map[i][j].nearBlock.push_back({ i - 1, j });
+			}
+			if (!map[i][j - 1].solid) {
+				map[i][j].nearBlock.push_back({ i, j - 1 });
 			}
 		}
 
